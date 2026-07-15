@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧸 手把手教學｜自架你的電競娃娃虛擬收藏室</title>
+<meta name="description" content="零基礎也能完成：從註冊帳號到擁有自己的娃娃收藏展示網站，全程免費，約 40 分鐘。">
+<style>
+  :root {
+    --bg: #fdfaf6;
+    --card: #ffffff;
+    --ink: #3d3733;
+    --muted: #8a817a;
+    --accent: #e8845c;
+    --accent-soft: #fdeee6;
+    --line: #ece5dd;
+    --tip-bg: #eef7ee;
+    --tip-line: #bfdfc0;
+    --warn-bg: #fdf3e2;
+    --warn-line: #f0d9a8;
+    --code-bg: #f6f1ec;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", "Microsoft JhengHei", "PingFang TC", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.8;
+  }
+  a { color: var(--accent); }
+
+  /* ---------- 頂部導覽 ---------- */
+  .topnav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(253, 250, 246, 0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+    padding: 10px 16px;
+    display: flex; gap: 6px; align-items: center;
+    overflow-x: auto; white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  .topnav .logo { font-weight: 700; margin-right: 8px; }
+  .topnav a {
+    text-decoration: none; color: var(--muted);
+    font-size: 0.85rem; padding: 4px 10px; border-radius: 999px;
+  }
+  .topnav a:hover { background: var(--accent-soft); color: var(--accent); }
+
+  .wrap { max-width: 780px; margin: 0 auto; padding: 24px 20px 80px; }
+
+  /* ---------- Hero ---------- */
+  .hero { text-align: center; padding: 40px 0 24px; }
+  .hero h1 { font-size: clamp(1.6rem, 5vw, 2.4rem); margin: 0 0 12px; line-height: 1.4; }
+  .hero p.sub { color: var(--muted); margin: 0 auto 20px; max-width: 32em; }
+  .chips { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .chip {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 6px 14px; font-size: 0.85rem;
+  }
+
+  /* ---------- 步驟區塊 ---------- */
+  section.step {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 28px clamp(18px, 4vw, 32px);
+    margin: 28px 0;
+  }
+  .step-head { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+  .step-num {
+    flex: none; width: 44px; height: 44px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; font-weight: 700;
+  }
+  .step h2 { margin: 0; font-size: clamp(1.15rem, 3.5vw, 1.45rem); }
+  .step .goal { color: var(--muted); font-size: 0.9rem; margin: 0 0 12px 58px; }
+  @media (max-width: 520px) { .step .goal { margin-left: 0; } }
+
+  .step h3 { margin: 28px 0 8px; font-size: 1.05rem; border-left: 4px solid var(--accent); padding-left: 10px; }
+  ol.todo { padding-left: 1.4em; }
+  ol.todo > li { margin: 10px 0; }
+  code {
+    background: var(--code-bg); padding: 2px 7px; border-radius: 6px;
+    font-family: Consolas, "Courier New", monospace; font-size: 0.9em;
+    word-break: break-all;
+  }
+
+  /* ---------- 提示框 ---------- */
+  .tip, .warn {
+    border-radius: 10px; padding: 12px 16px; margin: 14px 0; font-size: 0.92rem;
+  }
+  .tip  { background: var(--tip-bg);  border: 1px solid var(--tip-line); }
+  .warn { background: var(--warn-bg); border: 1px solid var(--warn-line); }
+  .tip::before  { content: "💡 "; }
+  .warn::before { content: "⚠️ "; }
+
+  /* ---------- 截圖佔位 ---------- */
+  figure.shot { margin: 18px 0; }
+  figure.shot img {
+    max-width: 100%; border-radius: 10px;
+    border: 1px solid var(--line);
+    box-shadow: 0 3px 14px rgba(61, 55, 51, 0.08);
+  }
+  figure.shot figcaption { color: var(--muted); font-size: 0.85rem; text-align: center; margin-top: 6px; }
+  figure.shot.missing img, figure.shot.missing figcaption { display: none; }
+  figure.shot.missing::after {
+    content: "📷 待補截圖：" attr(data-file) "\A（要截：" attr(data-desc) "）";
+    white-space: pre-wrap;
+    display: block; text-align: center;
+    color: var(--muted); font-size: 0.88rem;
+    border: 2px dashed var(--line); border-radius: 10px;
+    padding: 40px 20px; background: var(--bg);
+  }
+
+  /* ---------- 可複製區塊 ---------- */
+  .copyblock {
+    position: relative; background: var(--code-bg);
+    border: 1px solid var(--line); border-radius: 10px;
+    padding: 12px 96px 12px 14px; margin: 10px 0;
+    font-family: Consolas, "Courier New", monospace; font-size: 0.88rem;
+    word-break: break-all;
+  }
+  .copyblock button, details.sqlbox button {
+    position: absolute; top: 8px; right: 8px;
+    border: 1px solid var(--line); background: var(--card);
+    border-radius: 8px; padding: 4px 12px; font-size: 0.8rem;
+    cursor: pointer; color: var(--ink);
+  }
+  .copyblock button:hover, details.sqlbox button:hover { background: var(--accent-soft); }
+
+  details.sqlbox {
+    position: relative; background: var(--code-bg);
+    border: 1px solid var(--line); border-radius: 10px;
+    padding: 10px 14px; margin: 12px 0;
+  }
+  details.sqlbox summary { cursor: pointer; font-weight: 600; }
+  details.sqlbox pre {
+    margin: 10px 0 0; overflow-x: auto; font-size: 0.8rem; line-height: 1.5;
+  }
+
+  /* ---------- 環境變數表 ---------- */
+  table.env { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.88rem; }
+  table.env th, table.env td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+  table.env th { background: var(--code-bg); }
+  .tablewrap { overflow-x: auto; }
+
+  /* ---------- FAQ ---------- */
+  details.faq {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 10px; padding: 12px 18px; margin: 10px 0;
+  }
+  details.faq summary { cursor: pointer; font-weight: 600; }
+  details.faq[open] { border-color: var(--accent); }
+
+  footer { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 48px; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <span class="logo">🧸</span>
+  <a href="#step0">準備</a>
+  <a href="#step1">GitHub</a>
+  <a href="#step2">Fork</a>
+  <a href="#step3">Supabase</a>
+  <a href="#step4">Vercel</a>
+  <a href="#step5">開始使用</a>
+  <a href="#faq">常見問題</a>
+</nav>
+
+<div class="wrap">
+
+<header class="hero">
+  <h1>🧸 自架你的<br>電競娃娃虛擬收藏室</h1>
+  <p class="sub">把整櫃收藏變成一個可以分享給朋友的網站：上傳照片、AI 自動去背、拖進場景拼出展示櫃。照著做就好，不需要會寫程式。</p>
+  <div class="chips">
+    <span class="chip">💰 全程免費</span>
+    <span class="chip">⏱️ 約 40 分鐘</span>
+    <span class="chip">🌱 零基礎 OK</span>
+  </div>
+</header>
+
+<figure class="shot" data-file="00-finished-home.png" data-desc="完成後的收藏總覽首頁">
+  <img src="images/00-finished-home.png" alt="完成後的收藏總覽首頁" onerror="this.parentElement.classList.add('missing')">
+  <figcaption>完成後，你的收藏總覽會長這樣</figcaption>
+</figure>
+<figure class="shot" data-file="00-finished-scene.png" data-desc="完成後的虛擬收藏室場景頁">
+  <img src="images/00-finished-scene.png" alt="完成後的虛擬收藏室場景" onerror="this.parentElement.classList.add('missing')">
+  <figcaption>還能把娃娃拖進場景，拼出自己的虛擬展示間</figcaption>
+</figure>
+
+<!-- ==================== STEP 0 ==================== -->
+<section class="step" id="step0">
+  <div class="step-head"><div class="step-num">0</div><h2>開始前，先搞懂我們要做什麼</h2></div>
+  <p class="goal">🎯 目標：知道等一下每個步驟在幹嘛，不會做到一半迷路。</p>
+
+  <p>做一個網站，其實就是把三樣東西接起來。用開一間店來比喻：</p>
+  <ol class="todo">
+    <li><strong>GitHub</strong> = 設計圖倉庫。網站的「程式碼」放在這裡，我們會複製一份現成的設計圖變成你的。</li>
+    <li><strong>Supabase</strong> = 你的倉庫。娃娃的照片和資料都存在這裡。</li>
+    <li><strong>Vercel</strong> = 房東 + 店面。它把設計圖蓋成真的網站，給你一個網址讓大家逛。</li>
+  </ol>
+  <p>這三個服務都有免費方案，個人收藏展示的用量<strong>完全不會超過免費額度</strong>，不用綁信用卡。</p>
+
+  <h3>你需要準備的東西</h3>
+  <ol class="todo">
+    <li>一個 <strong>email 信箱</strong>（三個服務註冊都用它）</li>
+    <li>一台<strong>電腦</strong>（手機也能看網站，但設定過程用電腦操作比較不容易出錯）</li>
+    <li>一段<strong>不被打擾的 40 分鐘</strong> ☕</li>
+  </ol>
+
+  <div class="tip">等一下會請你抄下幾把「金鑰」（很長的亂碼）。建議先開一個記事本檔案，抄的時候貼在裡面，最後全部填完再刪掉。</div>
+</section>
+
+<!-- ==================== STEP 1 ==================== -->
+<section class="step" id="step1">
+  <div class="step-head"><div class="step-num">1</div><h2>註冊 GitHub 帳號</h2></div>
+  <p class="goal">🎯 目標：有一個 GitHub 帳號。已經有的話直接跳到步驟 2。</p>
+
+  <ol class="todo">
+    <li>打開 <a href="https://github.com/signup" target="_blank" rel="noopener">github.com/signup</a></li>
+    <li>輸入 email、設定密碼、取一個帳號名稱（<strong>之後你的網站網址會用到這個名稱</strong>，建議取短一點的英文）</li>
+    <li>完成信箱驗證，看到 GitHub 首頁就成功了</li>
+  </ol>
+
+  <figure class="shot" data-file="01-github-signup.png" data-desc="GitHub 註冊頁面">
+    <img src="images/01-github-signup.png" alt="GitHub 註冊頁面" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>GitHub 註冊頁面</figcaption>
+  </figure>
+
+  <div class="tip">註冊過程如果出現問卷（問你是學生還是工程師之類的），隨便選或按 Skip 跳過都可以，不影響任何功能。</div>
+</section>
+
+<!-- ==================== STEP 2 ==================== -->
+<section class="step" id="step2">
+  <div class="step-head"><div class="step-num">2</div><h2>Fork：複製一份網站設計圖</h2></div>
+  <p class="goal">🎯 目標：把 Collector 專案複製成你自己的。</p>
+
+  <p>「Fork」的意思就是：把別人的專案<strong>原封不動複製一份到你的帳號底下</strong>，之後它就完全是你的了，怎麼改都不會影響到原作者。</p>
+
+  <ol class="todo">
+    <li>登入 GitHub 後，打開 <a href="https://github.com/Sallynium/Collector" target="_blank" rel="noopener">github.com/Sallynium/Collector</a></li>
+    <li>點右上角的 <strong>Fork</strong> 按鈕</li>
+    <li>出現的頁面什麼都不用改，直接按綠色的 <strong>Create fork</strong></li>
+    <li>幾秒後你會被帶到 <code>github.com/你的帳號/Collector</code> —— 這份就是你的了！</li>
+  </ol>
+
+  <figure class="shot" data-file="02-fork-button.png" data-desc="Collector 專案頁右上角的 Fork 按鈕位置">
+    <img src="images/02-fork-button.png" alt="Fork 按鈕位置" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Fork 按鈕在專案頁的右上角</figcaption>
+  </figure>
+  <figure class="shot" data-file="02-fork-create.png" data-desc="Create fork 確認頁面">
+    <img src="images/02-fork-create.png" alt="Create fork 頁面" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>什麼都不用改，直接按 Create fork</figcaption>
+  </figure>
+</section>
+
+<!-- ==================== STEP 3 ==================== -->
+<section class="step" id="step3">
+  <div class="step-head"><div class="step-num">3</div><h2>Supabase：建立你的雲端倉庫</h2></div>
+  <p class="goal">🎯 目標：建好資料庫，抄下 3 把金鑰。這是最長的一步，慢慢來。</p>
+
+  <h3>3-1. 註冊並建立專案</h3>
+  <ol class="todo">
+    <li>打開 <a href="https://supabase.com" target="_blank" rel="noopener">supabase.com</a>，點 <strong>Start your project</strong>，選擇用 GitHub 帳號登入（剛好步驟 1 辦好了！）</li>
+    <li>點 <strong>New project</strong> 建立新專案：
+      <ul>
+        <li><strong>Name</strong>：隨意，例如 <code>my-collection</code></li>
+        <li><strong>Database Password</strong>：按 Generate 產生一組，<strong>抄到記事本</strong>（平常用不到，但遺失很麻煩）</li>
+        <li><strong>Region</strong>：選 <code>Northeast Asia (Tokyo)</code>，離台灣最近、速度最快</li>
+      </ul>
+    </li>
+    <li>按 <strong>Create new project</strong>，等 1–2 分鐘讓它開通</li>
+  </ol>
+
+  <figure class="shot" data-file="03-supabase-new-project.png" data-desc="Supabase 建立新專案的表單（Name / Password / Region）">
+    <img src="images/03-supabase-new-project.png" alt="Supabase 建立新專案" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>建立新專案：取名、產生密碼、選東京</figcaption>
+  </figure>
+
+  <h3>3-2. 蓋好倉庫的架子（執行 SQL）</h3>
+  <p>倉庫開好了，但裡面還是空的，要先把「放娃娃資料的架子」蓋起來。下面這段指令會自動蓋好全部的架子，你只要複製 → 貼上 → 執行：</p>
+
+  <ol class="todo">
+    <li>在 Supabase 左邊選單找到 <strong>SQL Editor</strong>（圖示像一張紙）</li>
+    <li>點下面的「複製 SQL」按鈕，把整段指令貼進編輯器</li>
+    <li>按右下角綠色的 <strong>Run</strong>，看到 <code>Success. No rows returned</code> 就完成了</li>
+  </ol>
+
+  <details class="sqlbox">
+    <summary>📋 點我展開 SQL 指令（或直接按右邊的複製按鈕）</summary>
+    <button type="button" data-copy-target="schema-sql">複製 SQL</button>
+    <pre id="schema-sql">-- ============================================================
+-- Esports Doll Showcase — Supabase Schema
+-- 在 Supabase Dashboard → SQL Editor 貼上執行即可
+-- ============================================================
+
+-- 系列（如：A 系列、2025 世界賽紀念系列）
+create table if not exists series (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  description text,
+  created_at timestamptz not null default now()
+);
+
+-- 收藏櫃 / 位置（如：A 櫃、客廳展示架）
+create table if not exists cabinets (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  location text,
+  created_at timestamptz not null default now()
+);
+
+-- 娃娃檔案
+create table if not exists dolls (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  description text,
+  series_id uuid references series(id) on delete set null,
+  cabinet_id uuid references cabinets(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+-- 造型（一隻娃娃可有多張去背照片：預設、夏季穿搭、戰隊服…）
+create table if not exists doll_variants (
+  id uuid primary key default gen_random_uuid(),
+  doll_id uuid not null references dolls(id) on delete cascade,
+  name text not null default '預設造型',
+  image_url text not null,
+  sort_order int not null default 0,
+  created_at timestamptz not null default now()
+);
+
+-- 虛擬收藏室場景
+create table if not exists scenes (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  background_url text,
+  layout jsonb not null default '[]'::jsonb,
+  is_published boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+-- ---------- Row Level Security ----------
+-- 公開唯讀；寫入一律走伺服器端 service_role（繞過 RLS）
+alter table series enable row level security;
+alter table cabinets enable row level security;
+alter table dolls enable row level security;
+alter table doll_variants enable row level security;
+alter table scenes enable row level security;
+
+create policy "public read series" on series for select using (true);
+create policy "public read cabinets" on cabinets for select using (true);
+create policy "public read dolls" on dolls for select using (true);
+create policy "public read variants" on doll_variants for select using (true);
+create policy "public read published scenes" on scenes for select using (is_published = true);
+
+-- ---------- Storage ----------
+-- 建立公開圖片 bucket（去背 PNG 與場景背景圖）
+insert into storage.buckets (id, name, public)
+values ('doll-images', 'doll-images', true)
+on conflict (id) do nothing;
+
+create policy "public read doll-images"
+on storage.objects for select
+using (bucket_id = 'doll-images');</pre>
+  </details>
+
+  <figure class="shot" data-file="03-supabase-sql.png" data-desc="SQL Editor 貼上指令後按 Run，顯示 Success">
+    <img src="images/03-supabase-sql.png" alt="SQL Editor 執行畫面" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>貼上 → Run → 看到 Success 就成功</figcaption>
+  </figure>
+
+  <h3>3-3. 抄下 3 把金鑰</h3>
+  <p>金鑰就像倉庫的鑰匙，等一下要交給 Vercel，網站才有權限進倉庫拿資料。</p>
+  <ol class="todo">
+    <li>左邊選單最下面點 <strong>Project Settings</strong>（齒輪圖示）→ <strong>API</strong>（或 <strong>API Keys</strong>）</li>
+    <li>把這 3 個值抄到記事本：
+      <ul>
+        <li><strong>Project URL</strong>（長得像 <code>https://xxxx.supabase.co</code>）</li>
+        <li><strong>anon public</strong> 金鑰（新版介面可能叫 <code>publishable</code>）</li>
+        <li><strong>service_role</strong> 金鑰（新版介面可能叫 <code>secret</code>，要點一下眼睛圖示才會顯示）</li>
+      </ul>
+    </li>
+  </ol>
+
+  <figure class="shot" data-file="03-supabase-keys.png" data-desc="Project Settings → API 頁面，標出三個值的位置（金鑰記得打碼）">
+    <img src="images/03-supabase-keys.png" alt="Supabase 金鑰頁面" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>三個值都在 Project Settings → API 這一頁</figcaption>
+  </figure>
+
+  <div class="warn"><strong>service_role 金鑰 = 倉庫萬能鑰匙</strong>，絕對不要貼到任何公開的地方（社群、聊天群、GitHub）。它只會被填進 Vercel 的設定裡，其他地方都不該出現。</div>
+</section>
+
+<!-- ==================== STEP 4 ==================== -->
+<section class="step" id="step4">
+  <div class="step-head"><div class="step-num">4</div><h2>Vercel：把網站架起來</h2></div>
+  <p class="goal">🎯 目標：網站上線，拿到你自己的網址。</p>
+
+  <h3>4-1. 用 GitHub 帳號登入 Vercel</h3>
+  <ol class="todo">
+    <li>打開 <a href="https://vercel.com/signup" target="_blank" rel="noopener">vercel.com/signup</a></li>
+    <li>選 <strong>Hobby</strong>（免費方案），然後點 <strong>Continue with GitHub</strong> 授權登入</li>
+  </ol>
+
+  <h3>4-2. 匯入你的 Collector</h3>
+  <ol class="todo">
+    <li>進入後點 <strong>Add New… → Project</strong></li>
+    <li>清單裡找到你剛剛 Fork 的 <strong>Collector</strong>，點 <strong>Import</strong></li>
+  </ol>
+
+  <figure class="shot" data-file="04-vercel-import.png" data-desc="Vercel 匯入 GitHub repo 的清單，Collector 旁邊有 Import 按鈕">
+    <img src="images/04-vercel-import.png" alt="Vercel 匯入畫面" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>找到 Collector，按 Import</figcaption>
+  </figure>
+
+  <h3>4-3. 填入 4 個環境變數（最關鍵的一步！）</h3>
+  <p>在部署設定頁找到 <strong>Environment Variables</strong> 區塊，把下面 4 組「名稱 + 值」一組一組加進去。名稱可以直接按複製按鈕，<strong>一個字都不能差</strong>：</p>
+
+  <div class="tablewrap">
+  <table class="env">
+    <tr><th>名稱（照抄）</th><th>值（填什麼）</th></tr>
+    <tr>
+      <td><div class="copyblock">NEXT_PUBLIC_SUPABASE_URL<button type="button" data-copy="NEXT_PUBLIC_SUPABASE_URL">複製</button></div></td>
+      <td>步驟 3-3 抄的 <strong>Project URL</strong></td>
+    </tr>
+    <tr>
+      <td><div class="copyblock">NEXT_PUBLIC_SUPABASE_ANON_KEY<button type="button" data-copy="NEXT_PUBLIC_SUPABASE_ANON_KEY">複製</button></div></td>
+      <td>步驟 3-3 抄的 <strong>anon public</strong> 金鑰</td>
+    </tr>
+    <tr>
+      <td><div class="copyblock">SUPABASE_SERVICE_ROLE_KEY<button type="button" data-copy="SUPABASE_SERVICE_ROLE_KEY">複製</button></div></td>
+      <td>步驟 3-3 抄的 <strong>service_role</strong> 金鑰</td>
+    </tr>
+    <tr>
+      <td><div class="copyblock">ADMIN_PASSWORD<button type="button" data-copy="ADMIN_PASSWORD">複製</button></div></td>
+      <td><strong>自己發明一組管理密碼</strong>，之後登入後台用。別用你在其他網站用過的密碼</td>
+    </tr>
+  </table>
+  </div>
+
+  <figure class="shot" data-file="04-vercel-env.png" data-desc="Vercel 環境變數填寫畫面，四組都填好的狀態（值記得打碼）">
+    <img src="images/04-vercel-env.png" alt="環境變數填寫畫面" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>四組都加好再往下一步</figcaption>
+  </figure>
+
+  <h3>4-4. 部署！</h3>
+  <ol class="todo">
+    <li>按 <strong>Deploy</strong>，等 1–3 分鐘</li>
+    <li>看到滿天彩帶的 <strong>Congratulations!</strong> 就成功了 🎉</li>
+    <li>點畫面上的預覽圖或 <strong>Visit</strong>，你的網站網址長得像 <code>https://collector-xxxx.vercel.app</code> —— 把它存到書籤！</li>
+  </ol>
+
+  <figure class="shot" data-file="04-vercel-deployed.png" data-desc="Vercel 部署成功的 Congratulations 畫面">
+    <img src="images/04-vercel-deployed.png" alt="部署成功畫面" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>看到這個畫面代表你的網站上線了</figcaption>
+  </figure>
+
+  <div class="tip">如果部署完打開網站看到「🔧 尚未完成初始設定」，代表環境變數沒填對，看<a href="#faq">常見問題第 1 條</a>就能修好。</div>
+</section>
+
+<!-- ==================== STEP 5 ==================== -->
+<section class="step" id="step5">
+  <div class="step-head"><div class="step-num">5</div><h2>開始佈置你的收藏室</h2></div>
+  <p class="goal">🎯 目標：上架第一隻娃娃、拼出第一個場景。</p>
+
+  <h3>5-1. 登入管理後台</h3>
+  <ol class="todo">
+    <li>在你的網站網址後面加上 <code>/login</code>（例如 <code>https://collector-xxxx.vercel.app/login</code>）</li>
+    <li>輸入你在步驟 4-3 自己發明的 <strong>ADMIN_PASSWORD</strong></li>
+  </ol>
+  <figure class="shot" data-file="05-login.png" data-desc="管理員登入頁面">
+    <img src="images/05-login.png" alt="管理員登入頁" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>只有知道密碼的你能進後台，訪客只能看</figcaption>
+  </figure>
+
+  <h3>5-2. 建立分類和第一隻娃娃</h3>
+  <ol class="todo">
+    <li>進入 <strong>庫存管理</strong>，先在「系列」和「收藏櫃」分頁各建至少一筆（例如系列「戰隊限定」、收藏櫃「A 櫃」）</li>
+    <li>回到「娃娃」分頁，新增你的第一隻娃娃，選好它的系列和櫃位</li>
+  </ol>
+  <figure class="shot" data-file="05-inventory.png" data-desc="庫存管理頁，已建立一筆系列和一隻娃娃">
+    <img src="images/05-inventory.png" alt="庫存管理頁" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>庫存管理：系列、收藏櫃、娃娃都在這裡建</figcaption>
+  </figure>
+
+  <h3>5-3. 上傳照片，讓 AI 幫你去背</h3>
+  <ol class="todo">
+    <li>點進剛建好的娃娃 → <strong>新增造型</strong> → 選一張娃娃照片（背景越乾淨效果越好）</li>
+    <li>等 AI 自動去背（第一次會下載模型，需要 1–2 分鐘，之後就快了）</li>
+    <li>如果 AI 誤刪了耳機或頭髮，用 <strong>🟢 綠色筆刷</strong>塗回來；多留了雜物就用 <strong>🔴 紅色筆刷</strong>擦掉</li>
+    <li>滿意後按儲存。一隻娃娃可以放很多造型（預設、夏季穿搭、戰隊服…），前台可以點擊切換</li>
+  </ol>
+  <figure class="shot" data-file="05-bg-removal.png" data-desc="AI 去背 + 魔術筆編輯器畫面">
+    <img src="images/05-bg-removal.png" alt="去背編輯器" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>AI 去背 + 魔術筆手動修補</figcaption>
+  </figure>
+
+  <h3>5-4. 拼出你的虛擬收藏室</h3>
+  <ol class="todo">
+    <li>後台進入 <strong>虛擬收藏室</strong> → 建立場景、取個名字</li>
+    <li>上傳一張背景圖（書櫃照片、電競桌照片、或任何你喜歡的圖）</li>
+    <li>把娃娃一隻隻拖進場景，自由縮放、旋轉、調整前後順序</li>
+    <li>儲存 → <strong>發布</strong>，訪客就能在 <code>/scenes</code> 頁看到</li>
+  </ol>
+  <figure class="shot" data-file="05-scene-editor.png" data-desc="場景編輯器：背景圖上擺了幾隻去背娃娃">
+    <img src="images/05-scene-editor.png" alt="場景編輯器" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>像貼貼紙一樣拼出你的展示櫃</figcaption>
+  </figure>
+
+  <h3>5-5. 分享給朋友 🎉</h3>
+  <p>把你的網址（不含 <code>/login</code>）傳給朋友，他們就能瀏覽你的收藏、點娃娃切換造型、逛你拼的虛擬收藏室。後台只有你有密碼能進，不用擔心被亂改。</p>
+  <figure class="shot" data-file="05-share.png" data-desc="訪客視角的前台首頁，已有娃娃的狀態">
+    <img src="images/05-share.png" alt="前台成品" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>訪客看到的樣子</figcaption>
+  </figure>
+</section>
+
+<!-- ==================== FAQ ==================== -->
+<section class="step" id="faq">
+  <div class="step-head"><div class="step-num">?</div><h2>常見問題</h2></div>
+
+  <details class="faq">
+    <summary>1. 網站打開顯示「🔧 尚未完成初始設定」</summary>
+    <p>代表 Vercel 沒讀到 Supabase 的設定。到 Vercel → 你的專案 → <strong>Settings → Environment Variables</strong> 檢查步驟 4-3 的 4 組變數：名稱有沒有打錯字、值有沒有多複製到空格。修正後到 <strong>Deployments</strong> 分頁，點最新那筆右邊的「…」→ <strong>Redeploy</strong>，環境變數改完一定要重新部署才會生效。</p>
+  </details>
+
+  <details class="faq">
+    <summary>2. 忘記管理密碼了怎麼辦？</summary>
+    <p>不用怕，密碼就存在 Vercel 的環境變數裡。到 Vercel → Settings → Environment Variables 找到 <code>ADMIN_PASSWORD</code>，可以直接看值，或改成新的（改完記得 Redeploy）。</p>
+  </details>
+
+  <details class="faq">
+    <summary>3. 圖片上傳失敗 / 存檔一直轉圈圈</summary>
+    <p>最常見的原因是步驟 3-2 的 SQL 沒有執行成功（架子沒蓋好）。回 Supabase 的 SQL Editor 把指令重新貼上執行一次——這段指令設計成<strong>重複執行也不會壞</strong>，放心按 Run。另外到左邊選單 <strong>Storage</strong> 確認有一個叫 <code>doll-images</code> 的 bucket。</p>
+  </details>
+
+  <details class="faq">
+    <summary>4. 網站放了一陣子沒動，突然打不開 / 資料都不見了？</summary>
+    <p>資料沒有不見！Supabase 免費方案的專案<strong>閒置 7 天會自動休眠</strong>。到 <a href="https://supabase.com/dashboard" target="_blank" rel="noopener">Supabase Dashboard</a> 打開你的專案，按 <strong>Restore</strong> 按鈕，等幾分鐘就會全部回來。常常有朋友來逛的話就不會休眠。</p>
+  </details>
+
+  <details class="faq">
+    <summary>5. 真的完全免費嗎？額度用得完嗎？</summary>
+    <p>Vercel Hobby 方案和 Supabase 免費方案對個人展示站來說非常夠用：Supabase 免費給 500MB 資料庫 + 1GB 圖片空間，以去背後的 PNG 來算大約能放幾百張。AI 去背是在<strong>你自己的瀏覽器裡</strong>運算的，不花任何伺服器費用。兩個服務免費方案都不需要綁信用卡，所以就算真的用爆了也只會暫停，不會被扣錢。</p>
+  </details>
+
+  <details class="faq">
+    <summary>6. 想換網址名稱（vercel.app 前面那段）</summary>
+    <p>到 Vercel → 你的專案 → <strong>Settings → Domains</strong>，點 Edit 就能改成 <code>你想要的名字.vercel.app</code>（沒被別人用走的話）。</p>
+  </details>
+
+  <details class="faq">
+    <summary>7. 原版 Collector 更新了，我要怎麼跟上？</summary>
+    <p>打開你的 <code>github.com/你的帳號/Collector</code>，如果上方出現「This branch is X commits behind」，點旁邊的 <strong>Sync fork → Update branch</strong>，Vercel 會自動重新部署成新版。你的娃娃資料都在 Supabase，更新程式不會影響資料。</p>
+  </details>
+</section>
+
+<footer>
+  <p>🧸 <a href="https://github.com/Sallynium/Collector" target="_blank" rel="noopener">Collector</a> — 開源、免費、自架的娃娃收藏展示網站（MIT License）</p>
+</footer>
+
+</div>
+
+<script>
+  // 一鍵複製：data-copy 直接複製字串；data-copy-target 複製指定元素的文字
+  document.addEventListener("click", async (e) => {
+    const btn = e.target.closest("button[data-copy], button[data-copy-target]");
+    if (!btn) return;
+    const text = btn.dataset.copy ?? document.getElementById(btn.dataset.copyTarget)?.textContent ?? "";
+    const done = (ok) => {
+      const old = btn.textContent;
+      btn.textContent = ok ? "已複製 ✓" : "請手動複製";
+      setTimeout(() => { btn.textContent = old; }, 1500);
+    };
+    try {
+      await navigator.clipboard.writeText(text);
+      done(true);
+    } catch {
+      // 舊瀏覽器或無 Clipboard API 權限時的後備方案
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      let ok = false;
+      try { ok = document.execCommand("copy"); } catch { ok = false; }
+      ta.remove();
+      done(ok);
+    }
+  });
+</script>
+
+</body>
+</html>
