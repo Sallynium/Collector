@@ -17,6 +17,8 @@ const nextConfig: NextConfig = {
     ? {
         output: "export" as const,
         basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
+        // 每頁輸出成 資料夾/index.html，GitHub Pages 帶不帶尾斜線都能開
+        trailingSlash: true,
       }
     : {}),
 };
