@@ -1,28 +1,12 @@
-import { isSupabaseConfigured, supabaseAnon } from "@/lib/supabase/server";
-import type { Cabinet, Doll, Series } from "@/lib/types";
+import { listCabinets, listDollsWithVariants, listSeries } from "@/lib/content/store";
 import { Gallery } from "@/components/gallery";
-import { SetupNotice } from "@/components/setup-notice";
-
-export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  if (!isSupabaseConfigured()) {
-    return <SetupNotice />;
-  }
-
-  const sb = supabaseAnon();
-  const [dollsRes, seriesRes, cabinetsRes] = await Promise.all([
-    sb
-      .from("dolls")
-      .select("*, doll_variants(*)")
-      .order("created_at", { ascending: false }),
-    sb.from("series").select("*").order("name"),
-    sb.from("cabinets").select("*").order("name"),
+  const [dolls, series, cabinets] = await Promise.all([
+    listDollsWithVariants(),
+    listSeries(),
+    listCabinets(),
   ]);
-
-  const dolls = (dollsRes.data ?? []) as Doll[];
-  const series = (seriesRes.data ?? []) as Series[];
-  const cabinets = (cabinetsRes.data ?? []) as Cabinet[];
 
   return (
     <div className="space-y-6">

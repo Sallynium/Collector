@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🧸 手把手教學｜自架你的電競娃娃虛擬收藏室</title>
-<meta name="description" content="零基礎也能完成：從註冊帳號到擁有自己的娃娃收藏展示網站，全程免費，約 40 分鐘。">
+<meta name="description" content="從零開始：裝好工具、把專案抓下來、在自己電腦上整理收藏、git push 就上線。全程免費，不需要資料庫。">
 <style>
   :root {
     --bg: #fdfaf6;
@@ -19,6 +19,8 @@
     --warn-bg: #fdf3e2;
     --warn-line: #f0d9a8;
     --code-bg: #f6f1ec;
+    --term-bg: #2d2a28;
+    --term-ink: #e8e2db;
     --radius: 14px;
   }
   * { box-sizing: border-box; }
@@ -117,7 +119,28 @@
     padding: 40px 20px; background: var(--bg);
   }
 
-  /* ---------- 可複製區塊 ---------- */
+  /* ---------- 終端機指令區塊 ---------- */
+  .term {
+    position: relative; background: var(--term-bg); color: var(--term-ink);
+    border-radius: 10px; margin: 12px 0;
+    font-family: Consolas, "Courier New", monospace; font-size: 0.88rem;
+  }
+  .term .term-label {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 12px 0; font-family: inherit;
+    color: #a89f96; font-size: 0.78rem;
+  }
+  .term pre {
+    margin: 0; padding: 8px 14px 14px; overflow-x: auto; line-height: 1.7;
+  }
+  .term button {
+    border: 1px solid #4a4440; background: #3a3634; color: var(--term-ink);
+    border-radius: 8px; padding: 3px 12px; font-size: 0.78rem;
+    cursor: pointer;
+  }
+  .term button:hover { background: #4a4440; }
+
+  /* ---------- 行內可複製 ---------- */
   .copyblock {
     position: relative; background: var(--code-bg);
     border: 1px solid var(--line); border-radius: 10px;
@@ -125,29 +148,13 @@
     font-family: Consolas, "Courier New", monospace; font-size: 0.88rem;
     word-break: break-all;
   }
-  .copyblock button, details.sqlbox button {
+  .copyblock button {
     position: absolute; top: 8px; right: 8px;
     border: 1px solid var(--line); background: var(--card);
     border-radius: 8px; padding: 4px 12px; font-size: 0.8rem;
     cursor: pointer; color: var(--ink);
   }
-  .copyblock button:hover, details.sqlbox button:hover { background: var(--accent-soft); }
-
-  details.sqlbox {
-    position: relative; background: var(--code-bg);
-    border: 1px solid var(--line); border-radius: 10px;
-    padding: 10px 14px; margin: 12px 0;
-  }
-  details.sqlbox summary { cursor: pointer; font-weight: 600; }
-  details.sqlbox pre {
-    margin: 10px 0 0; overflow-x: auto; font-size: 0.8rem; line-height: 1.5;
-  }
-
-  /* ---------- 環境變數表 ---------- */
-  table.env { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.88rem; }
-  table.env th, table.env td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
-  table.env th { background: var(--code-bg); }
-  .tablewrap { overflow-x: auto; }
+  .copyblock button:hover { background: var(--accent-soft); }
 
   /* ---------- FAQ ---------- */
   details.faq {
@@ -164,12 +171,12 @@
 
 <nav class="topnav">
   <span class="logo">🧸</span>
-  <a href="#step0">準備</a>
-  <a href="#step1">GitHub</a>
-  <a href="#step2">Fork</a>
-  <a href="#step3">Supabase</a>
-  <a href="#step4">Vercel</a>
-  <a href="#step5">開始使用</a>
+  <a href="#step0">運作原理</a>
+  <a href="#step1">裝工具</a>
+  <a href="#step2">抓專案</a>
+  <a href="#step3">整理收藏</a>
+  <a href="#step4">發布上網</a>
+  <a href="#step5">日常更新</a>
   <a href="#faq">常見問題</a>
 </nav>
 
@@ -177,15 +184,15 @@
 
 <header class="hero">
   <h1>🧸 自架你的<br>電競娃娃虛擬收藏室</h1>
-  <p class="sub">把整櫃收藏變成一個可以分享給朋友的網站：上傳照片、AI 自動去背、拖進場景拼出展示櫃。照著做就好，不需要會寫程式。</p>
+  <p class="sub">在自己的電腦上整理收藏：上傳照片、AI 自動去背、拖進場景拼出展示櫃，然後一個 <code>git push</code> 就把成果發布到網路上。不需要資料庫、不需要伺服器、永遠免費。</p>
   <div class="chips">
     <span class="chip">💰 全程免費</span>
-    <span class="chip">⏱️ 約 40 分鐘</span>
-    <span class="chip">🌱 零基礎 OK</span>
+    <span class="chip">⏱️ 初次設定約 60 分鐘</span>
+    <span class="chip">🌱 會複製貼上就行</span>
   </div>
 </header>
 
-<figure class="shot" data-file="00-finished-home.png" data-desc="完成後的收藏總覽首頁">
+<figure class="shot" data-file="00-finished-home.png" data-desc="完成後的收藏總覽首頁（有娃娃的狀態）">
   <img src="images/00-finished-home.png" alt="完成後的收藏總覽首頁" onerror="this.parentElement.classList.add('missing')">
   <figcaption>完成後，你的收藏總覽會長這樣</figcaption>
 </figure>
@@ -196,330 +203,239 @@
 
 <!-- ==================== STEP 0 ==================== -->
 <section class="step" id="step0">
-  <div class="step-head"><div class="step-num">0</div><h2>開始前，先搞懂我們要做什麼</h2></div>
-  <p class="goal">🎯 目標：知道等一下每個步驟在幹嘛，不會做到一半迷路。</p>
+  <div class="step-head"><div class="step-num">0</div><h2>先搞懂運作原理（很重要，只要 2 分鐘）</h2></div>
+  <p class="goal">🎯 目標：理解「你的電腦 = 工作室，GitHub = 展場」這個模型，後面每一步都會很自然。</p>
 
-  <p>做一個網站，其實就是把三樣東西接起來。用開一間店來比喻：</p>
+  <p>這個專案的設計哲學是：<strong>不用資料庫，你的收藏資料和照片就是專案資料夾裡的檔案。</strong></p>
   <ol class="todo">
-    <li><strong>GitHub</strong> = 設計圖倉庫。網站的「程式碼」放在這裡，我們會複製一份現成的設計圖變成你的。</li>
-    <li><strong>Supabase</strong> = 你的倉庫。娃娃的照片和資料都存在這裡。</li>
-    <li><strong>Vercel</strong> = 房東 + 店面。它把設計圖蓋成真的網站，給你一個網址讓大家逛。</li>
+    <li><strong>在你的電腦上</strong>：開一個「管理後台」網頁，像逛電商後台一樣新增娃娃、AI 去背、拼場景。每次按下儲存，改的其實是資料夾裡的檔案（一個 JSON 清單 + 一堆去背 PNG）。</li>
+    <li><strong>發布的時候</strong>：用 <code>git push</code> 把資料夾同步到 GitHub，GitHub 會自動把它組裝成一個漂亮的展示網站，任何人都能瀏覽。</li>
   </ol>
-  <p>這三個服務都有免費方案，個人收藏展示的用量<strong>完全不會超過免費額度</strong>，不用綁信用卡。</p>
+  <p>這樣做的好處：</p>
+  <ol class="todo">
+    <li><strong>永遠免費</strong> — 沒有資料庫帳號、沒有伺服器、沒有「免費額度用完」的問題</li>
+    <li><strong>永不休眠</strong> — 展示網站是純靜態網頁，朋友半夜點開也秒開</li>
+    <li><strong>自帶時光機</strong> — 每次發布都是一個 git 紀錄，改壞了隨時退回上一版</li>
+  </ol>
 
   <h3>你需要準備的東西</h3>
   <ol class="todo">
-    <li>一個 <strong>email 信箱</strong>（三個服務註冊都用它）</li>
-    <li>一台<strong>電腦</strong>（手機也能看網站，但設定過程用電腦操作比較不容易出錯）</li>
-    <li>一段<strong>不被打擾的 40 分鐘</strong> ☕</li>
+    <li>一台<strong>電腦</strong>（Windows 或 Mac 都可以，本教學以 Windows 為主，Mac 對應之處會標註）</li>
+    <li>一個 <strong>email 信箱</strong>（註冊 GitHub 用）</li>
+    <li>初次設定約 <strong>60 分鐘</strong>；之後每次更新收藏只要 5 分鐘 ☕</li>
   </ol>
 
-  <div class="tip">等一下會請你抄下幾把「金鑰」（很長的亂碼）。建議先開一個記事本檔案，抄的時候貼在裡面，最後全部填完再刪掉。</div>
+  <div class="tip">教學裡所有灰黑色的「終端機區塊」都有<strong>複製按鈕</strong>，你不需要手打任何指令——複製、貼上、按 Enter，就這樣。</div>
 </section>
 
 <!-- ==================== STEP 1 ==================== -->
 <section class="step" id="step1">
-  <div class="step-head"><div class="step-num">1</div><h2>註冊 GitHub 帳號</h2></div>
-  <p class="goal">🎯 目標：有一個 GitHub 帳號。已經有的話直接跳到步驟 2。</p>
+  <div class="step-head"><div class="step-num">1</div><h2>安裝兩個工具：Git 和 Node.js</h2></div>
+  <p class="goal">🎯 目標：裝好 Git（同步工具）和 Node.js（讓後台在你電腦上跑起來的引擎），並確認能用。</p>
 
+  <h3>1-1. 先學會開「終端機」</h3>
+  <p>等一下的指令都在「終端機」裡執行——就是那個黑黑的打字視窗，別怕，我們只做複製貼上：</p>
   <ol class="todo">
-    <li>打開 <a href="https://github.com/signup" target="_blank" rel="noopener">github.com/signup</a></li>
-    <li>輸入 email、設定密碼、取一個帳號名稱（<strong>之後你的網站網址會用到這個名稱</strong>，建議取短一點的英文）</li>
-    <li>完成信箱驗證，看到 GitHub 首頁就成功了</li>
+    <li><strong>Windows</strong>：對「開始」按鈕按右鍵 → 選「<strong>終端機</strong>」（或按 <code>Win + X</code> 再按 <code>A</code>）</li>
+    <li><strong>Mac</strong>：按 <code>Cmd + 空白鍵</code>，輸入 <code>Terminal</code>，按 Enter</li>
   </ol>
-
-  <figure class="shot" data-file="01-github-signup.png" data-desc="GitHub 註冊頁面">
-    <img src="images/01-github-signup.png" alt="GitHub 註冊頁面" onerror="this.parentElement.classList.add('missing')">
-    <figcaption>GitHub 註冊頁面</figcaption>
+  <figure class="shot" data-file="01-terminal.png" data-desc="Windows 右鍵開始選單開啟終端機的畫面">
+    <img src="images/01-terminal.png" alt="開啟終端機" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>右鍵開始按鈕就能找到終端機</figcaption>
   </figure>
 
-  <div class="tip">註冊過程如果出現問卷（問你是學生還是工程師之類的），隨便選或按 Skip 跳過都可以，不影響任何功能。</div>
+  <h3>1-2. 安裝 Git</h3>
+  <ol class="todo">
+    <li>到 <a href="https://git-scm.com/downloads" target="_blank" rel="noopener">git-scm.com/downloads</a> 下載你系統的安裝檔</li>
+    <li>執行安裝，<strong>全部用預設值一直下一步</strong>就好（選項很多很嚇人，都不用改）</li>
+    <li>裝完<strong>重開終端機</strong>，貼上這行確認：</li>
+  </ol>
+  <div class="term">
+    <div class="term-label"><span>確認 Git 裝好了</span><button type="button" data-copy="git --version">複製</button></div>
+    <pre>git --version</pre>
+  </div>
+  <p>看到類似 <code>git version 2.50.0</code> 的字樣就成功了（數字不同沒關係）。</p>
+
+  <h3>1-3. 安裝 Node.js</h3>
+  <ol class="todo">
+    <li>到 <a href="https://nodejs.org/" target="_blank" rel="noopener">nodejs.org</a> 下載 <strong>LTS 版</strong>（頁面上寫著「建議大多數使用者使用」的那個）</li>
+    <li>執行安裝，一樣全部預設值下一步</li>
+    <li>裝完重開終端機，確認：</li>
+  </ol>
+  <div class="term">
+    <div class="term-label"><span>確認 Node.js 裝好了</span><button type="button" data-copy="node --version">複製</button></div>
+    <pre>node --version</pre>
+  </div>
+  <p>看到 <code>v22.x.x</code> 之類的版本號就 OK（v20 以上都可以）。</p>
+
+  <h3>1-4. 告訴 Git 你是誰（只要做一次）</h3>
+  <p>Git 每次記錄都會署名。把下面兩行的<strong>名字和 email 換成你自己的</strong>再貼上（email 建議跟等一下註冊 GitHub 的相同）：</p>
+  <div class="term">
+    <div class="term-label"><span>設定署名（記得改成你的資料）</span><button type="button" data-copy-target="cmd-gitconfig">複製</button></div>
+    <pre id="cmd-gitconfig">git config --global user.name "你的名字"
+git config --global user.email "你的email@example.com"</pre>
+  </div>
 </section>
 
 <!-- ==================== STEP 2 ==================== -->
 <section class="step" id="step2">
-  <div class="step-head"><div class="step-num">2</div><h2>Fork：複製一份網站設計圖</h2></div>
-  <p class="goal">🎯 目標：把 Collector 專案複製成你自己的。</p>
+  <div class="step-head"><div class="step-num">2</div><h2>把專案抓到你的電腦</h2></div>
+  <p class="goal">🎯 目標：擁有自己的 Collector 副本，並在電腦上準備就緒。</p>
 
-  <p>「Fork」的意思就是：把別人的專案<strong>原封不動複製一份到你的帳號底下</strong>，之後它就完全是你的了，怎麼改都不會影響到原作者。</p>
-
+  <h3>2-1. 註冊 GitHub 並 Fork</h3>
   <ol class="todo">
-    <li>登入 GitHub 後，打開 <a href="https://github.com/Sallynium/Collector" target="_blank" rel="noopener">github.com/Sallynium/Collector</a></li>
-    <li>點右上角的 <strong>Fork</strong> 按鈕</li>
-    <li>出現的頁面什麼都不用改，直接按綠色的 <strong>Create fork</strong></li>
-    <li>幾秒後你會被帶到 <code>github.com/你的帳號/Collector</code> —— 這份就是你的了！</li>
+    <li>到 <a href="https://github.com/signup" target="_blank" rel="noopener">github.com/signup</a> 註冊帳號（<strong>帳號名稱會出現在你的網站網址裡</strong>，建議取短一點的英文）。已經有帳號就直接下一步。</li>
+    <li>登入後打開 <a href="https://github.com/Sallynium/Collector" target="_blank" rel="noopener">github.com/Sallynium/Collector</a>，點右上角 <strong>Fork</strong> → 按綠色 <strong>Create fork</strong>。「Fork」= 複製一份到你帳號底下，從此它完全是你的。</li>
   </ol>
-
   <figure class="shot" data-file="02-fork-button.png" data-desc="Collector 專案頁右上角的 Fork 按鈕位置">
     <img src="images/02-fork-button.png" alt="Fork 按鈕位置" onerror="this.parentElement.classList.add('missing')">
-    <figcaption>Fork 按鈕在專案頁的右上角</figcaption>
+    <figcaption>Fork 按鈕在專案頁右上角</figcaption>
   </figure>
-  <figure class="shot" data-file="02-fork-create.png" data-desc="Create fork 確認頁面">
-    <img src="images/02-fork-create.png" alt="Create fork 頁面" onerror="this.parentElement.classList.add('missing')">
-    <figcaption>什麼都不用改，直接按 Create fork</figcaption>
-  </figure>
+
+  <h3>2-2. Clone：下載到電腦</h3>
+  <p>開終端機，貼上下面的指令，<strong>把「你的帳號」換成你的 GitHub 帳號名稱</strong>。這會在你目前的位置建立一個 <code>Collector</code> 資料夾：</p>
+  <div class="term">
+    <div class="term-label"><span>下載專案（記得改帳號名）</span><button type="button" data-copy-target="cmd-clone">複製</button></div>
+    <pre id="cmd-clone">git clone https://github.com/你的帳號/Collector.git
+cd Collector</pre>
+  </div>
+  <div class="tip">終端機打開時通常位在你的「使用者資料夾」（例如 <code>C:\Users\你的名字</code>），專案就會下載到那裡。想放別的地方，先用 <code>cd</code> 移動過去再執行，例如 <code>cd D:\projects</code>。</div>
+
+  <h3>2-3. 安裝專案依賴</h3>
+  <p>接著讓 Node.js 把專案需要的零件裝齊（第一次要跑幾分鐘，之後不用再做）：</p>
+  <div class="term">
+    <div class="term-label"><span>安裝依賴（在 Collector 資料夾裡執行）</span><button type="button" data-copy="npm install">複製</button></div>
+    <pre>npm install</pre>
+  </div>
+  <p>跑完出現一些 <code>added xxx packages</code> 的字樣就完成了。有黃色 warning 是正常的，不用理。</p>
 </section>
 
 <!-- ==================== STEP 3 ==================== -->
 <section class="step" id="step3">
-  <div class="step-head"><div class="step-num">3</div><h2>Supabase：建立你的雲端倉庫</h2></div>
-  <p class="goal">🎯 目標：建好資料庫，抄下 3 把金鑰。這是最長的一步，慢慢來。</p>
+  <div class="step-head"><div class="step-num">3</div><h2>啟動後台，整理你的收藏</h2></div>
+  <p class="goal">🎯 目標：在自己電腦上把娃娃上架、去背、拼場景。這是最好玩的一步。</p>
 
-  <h3>3-1. 註冊並建立專案</h3>
+  <h3>3-1. 啟動本機網站</h3>
+  <div class="term">
+    <div class="term-label"><span>啟動（在 Collector 資料夾裡執行）</span><button type="button" data-copy="npm run dev">複製</button></div>
+    <pre>npm run dev</pre>
+  </div>
   <ol class="todo">
-    <li>打開 <a href="https://supabase.com" target="_blank" rel="noopener">supabase.com</a>，點 <strong>Start your project</strong>，選擇用 GitHub 帳號登入（剛好步驟 1 辦好了！）</li>
-    <li>點 <strong>New project</strong> 建立新專案：
-      <ul>
-        <li><strong>Name</strong>：隨意，例如 <code>my-collection</code></li>
-        <li><strong>Database Password</strong>：按 Generate 產生一組，<strong>抄到記事本</strong>（平常用不到，但遺失很麻煩）</li>
-        <li><strong>Region</strong>：選 <code>Northeast Asia (Tokyo)</code>，離台灣最近、速度最快</li>
-      </ul>
-    </li>
-    <li>按 <strong>Create new project</strong>，等 1–2 分鐘讓它開通</li>
+    <li>等它顯示 <code>Ready</code> 後，用瀏覽器打開 <a href="http://localhost:3000" target="_blank" rel="noopener">http://localhost:3000</a></li>
+    <li>右上角直接就有「<strong>管理後台</strong>」按鈕——在自己電腦上不需要登入，因為只有你摸得到</li>
+    <li>這個終端機視窗<strong>保持開著</strong>；想關掉網站時按 <code>Ctrl + C</code></li>
   </ol>
-
-  <figure class="shot" data-file="03-supabase-new-project.png" data-desc="Supabase 建立新專案的表單（Name / Password / Region）">
-    <img src="images/03-supabase-new-project.png" alt="Supabase 建立新專案" onerror="this.parentElement.classList.add('missing')">
-    <figcaption>建立新專案：取名、產生密碼、選東京</figcaption>
+  <figure class="shot" data-file="03-admin-home.png" data-desc="本機 localhost:3000 首頁，右上角有管理後台按鈕">
+    <img src="images/03-admin-home.png" alt="本機首頁" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>本機模式：右上角直接進管理後台，免登入</figcaption>
   </figure>
 
-  <h3>3-2. 蓋好倉庫的架子（執行 SQL）</h3>
-  <p>倉庫開好了，但裡面還是空的，要先把「放娃娃資料的架子」蓋起來。下面這段指令會自動蓋好全部的架子，你只要複製 → 貼上 → 執行：</p>
-
+  <h3>3-2. 建立分類和娃娃檔案</h3>
   <ol class="todo">
-    <li>在 Supabase 左邊選單找到 <strong>SQL Editor</strong>（圖示像一張紙）</li>
-    <li>點下面的「複製 SQL」按鈕，把整段指令貼進編輯器</li>
-    <li>按右下角綠色的 <strong>Run</strong>，看到 <code>Success. No rows returned</code> 就完成了</li>
+    <li>進入 <strong>庫存管理</strong>，先在「系列」和「收藏櫃」分頁各建至少一筆（例如系列「戰隊限定」、收藏櫃「A 櫃」）</li>
+    <li>回「娃娃」分頁新增你的第一隻娃娃，選好系列和櫃位</li>
   </ol>
-
-  <details class="sqlbox">
-    <summary>📋 點我展開 SQL 指令（或直接按右邊的複製按鈕）</summary>
-    <button type="button" data-copy-target="schema-sql">複製 SQL</button>
-    <pre id="schema-sql">-- ============================================================
--- Esports Doll Showcase — Supabase Schema
--- 在 Supabase Dashboard → SQL Editor 貼上執行即可
--- ============================================================
-
--- 系列（如：A 系列、2025 世界賽紀念系列）
-create table if not exists series (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  description text,
-  created_at timestamptz not null default now()
-);
-
--- 收藏櫃 / 位置（如：A 櫃、客廳展示架）
-create table if not exists cabinets (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  location text,
-  created_at timestamptz not null default now()
-);
-
--- 娃娃檔案
-create table if not exists dolls (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  description text,
-  series_id uuid references series(id) on delete set null,
-  cabinet_id uuid references cabinets(id) on delete set null,
-  created_at timestamptz not null default now()
-);
-
--- 造型（一隻娃娃可有多張去背照片：預設、夏季穿搭、戰隊服…）
-create table if not exists doll_variants (
-  id uuid primary key default gen_random_uuid(),
-  doll_id uuid not null references dolls(id) on delete cascade,
-  name text not null default '預設造型',
-  image_url text not null,
-  sort_order int not null default 0,
-  created_at timestamptz not null default now()
-);
-
--- 虛擬收藏室場景
-create table if not exists scenes (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  background_url text,
-  layout jsonb not null default '[]'::jsonb,
-  is_published boolean not null default false,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
--- ---------- Row Level Security ----------
--- 公開唯讀；寫入一律走伺服器端 service_role（繞過 RLS）
-alter table series enable row level security;
-alter table cabinets enable row level security;
-alter table dolls enable row level security;
-alter table doll_variants enable row level security;
-alter table scenes enable row level security;
-
-create policy "public read series" on series for select using (true);
-create policy "public read cabinets" on cabinets for select using (true);
-create policy "public read dolls" on dolls for select using (true);
-create policy "public read variants" on doll_variants for select using (true);
-create policy "public read published scenes" on scenes for select using (is_published = true);
-
--- ---------- Storage ----------
--- 建立公開圖片 bucket（去背 PNG 與場景背景圖）
-insert into storage.buckets (id, name, public)
-values ('doll-images', 'doll-images', true)
-on conflict (id) do nothing;
-
-create policy "public read doll-images"
-on storage.objects for select
-using (bucket_id = 'doll-images');</pre>
-  </details>
-
-  <figure class="shot" data-file="03-supabase-sql.png" data-desc="SQL Editor 貼上指令後按 Run，顯示 Success">
-    <img src="images/03-supabase-sql.png" alt="SQL Editor 執行畫面" onerror="this.parentElement.classList.add('missing')">
-    <figcaption>貼上 → Run → 看到 Success 就成功</figcaption>
+  <figure class="shot" data-file="03-inventory.png" data-desc="庫存管理頁，已建立系列和娃娃">
+    <img src="images/03-inventory.png" alt="庫存管理" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>系列、收藏櫃、娃娃都在庫存管理建立</figcaption>
   </figure>
 
-  <h3>3-3. 抄下 3 把金鑰</h3>
-  <p>金鑰就像倉庫的鑰匙，等一下要交給 Vercel，網站才有權限進倉庫拿資料。</p>
+  <h3>3-3. 上傳照片，AI 自動去背</h3>
   <ol class="todo">
-    <li>左邊選單最下面點 <strong>Project Settings</strong>（齒輪圖示）→ <strong>API</strong>（或 <strong>API Keys</strong>）</li>
-    <li>把這 3 個值抄到記事本：
-      <ul>
-        <li><strong>Project URL</strong>（長得像 <code>https://xxxx.supabase.co</code>）</li>
-        <li><strong>anon public</strong> 金鑰（新版介面可能叫 <code>publishable</code>）</li>
-        <li><strong>service_role</strong> 金鑰（新版介面可能叫 <code>secret</code>，要點一下眼睛圖示才會顯示）</li>
-      </ul>
-    </li>
+    <li>點進娃娃 → <strong>新增造型</strong> → 選一張娃娃照片（背景越乾淨效果越好）</li>
+    <li>AI 會在<strong>你自己的瀏覽器裡</strong>去背（第一次要下載模型，等 1–2 分鐘；照片不會被上傳到任何地方，隱私滿分）</li>
+    <li>AI 誤刪耳機、頭髮？用 <strong>🟢 綠色筆刷</strong>塗回來；背景有殘留就用 <strong>🔴 紅色筆刷</strong>擦掉</li>
+    <li>取個造型名稱按儲存。一隻娃娃可以存多個造型（預設、夏季穿搭、戰隊服…），展示時可以切換</li>
   </ol>
-
-  <figure class="shot" data-file="03-supabase-keys.png" data-desc="Project Settings → API 頁面，標出三個值的位置（金鑰記得打碼）">
-    <img src="images/03-supabase-keys.png" alt="Supabase 金鑰頁面" onerror="this.parentElement.classList.add('missing')">
-    <figcaption>三個值都在 Project Settings → API 這一頁</figcaption>
+  <figure class="shot" data-file="03-bg-removal.png" data-desc="AI 去背 + 魔術筆編輯器畫面">
+    <img src="images/03-bg-removal.png" alt="去背編輯器" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>AI 去背 + 魔術筆手動修補</figcaption>
   </figure>
 
-  <div class="warn"><strong>service_role 金鑰 = 倉庫萬能鑰匙</strong>，絕對不要貼到任何公開的地方（社群、聊天群、GitHub）。它只會被填進 Vercel 的設定裡，其他地方都不該出現。</div>
+  <h3>3-4. 拼場景、發布場景</h3>
+  <ol class="todo">
+    <li>後台進 <strong>虛擬收藏室</strong> → 建立場景 → 上傳背景圖（書櫃照、電競桌照都行）</li>
+    <li>把娃娃「放入場景」，拖曳移動、四角控點縮放旋轉、調整圖層順序 → <strong>儲存佈局</strong></li>
+    <li>回場景列表按 <strong>發布</strong>，這個場景才會出現在對外的展示頁</li>
+  </ol>
+  <figure class="shot" data-file="03-scene-editor.png" data-desc="場景編輯器：背景圖上擺著去背娃娃">
+    <img src="images/03-scene-editor.png" alt="場景編輯器" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>像貼貼紙一樣拼出展示櫃</figcaption>
+  </figure>
+
+  <div class="tip">你做的所有編輯都存在專案資料夾裡：清單在 <code>content/data.json</code>，去背圖在 <code>public/collection/</code>。好奇可以打開看看，不小心改壞也沒關係——下一步的 git 會保護你。</div>
 </section>
 
 <!-- ==================== STEP 4 ==================== -->
 <section class="step" id="step4">
-  <div class="step-head"><div class="step-num">4</div><h2>Vercel：把網站架起來</h2></div>
-  <p class="goal">🎯 目標：網站上線，拿到你自己的網址。</p>
+  <div class="step-head"><div class="step-num">4</div><h2>發布上網（第一次需要多做一個設定）</h2></div>
+  <p class="goal">🎯 目標：把整理好的收藏推上 GitHub，拿到你的公開網址。</p>
 
-  <h3>4-1. 用 GitHub 帳號登入 Vercel</h3>
+  <h3>4-1. 開啟 GitHub Pages（只做這一次）</h3>
   <ol class="todo">
-    <li>打開 <a href="https://vercel.com/signup" target="_blank" rel="noopener">vercel.com/signup</a></li>
-    <li>選 <strong>Hobby</strong>（免費方案），然後點 <strong>Continue with GitHub</strong> 授權登入</li>
+    <li>打開你的 <code>github.com/你的帳號/Collector</code> → 上方 <strong>Settings</strong> → 左邊選單 <strong>Pages</strong></li>
+    <li>「Build and deployment」的 <strong>Source</strong> 下拉選單改成 <strong>GitHub Actions</strong>，這樣就好</li>
   </ol>
-
-  <h3>4-2. 匯入你的 Collector</h3>
-  <ol class="todo">
-    <li>進入後點 <strong>Add New… → Project</strong></li>
-    <li>清單裡找到你剛剛 Fork 的 <strong>Collector</strong>，點 <strong>Import</strong></li>
-  </ol>
-
-  <figure class="shot" data-file="04-vercel-import.png" data-desc="Vercel 匯入 GitHub repo 的清單，Collector 旁邊有 Import 按鈕">
-    <img src="images/04-vercel-import.png" alt="Vercel 匯入畫面" onerror="this.parentElement.classList.add('missing')">
-    <figcaption>找到 Collector，按 Import</figcaption>
+  <figure class="shot" data-file="04-pages-setting.png" data-desc="Settings → Pages，Source 選 GitHub Actions">
+    <img src="images/04-pages-setting.png" alt="Pages 設定" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Source 選「GitHub Actions」</figcaption>
   </figure>
 
-  <h3>4-3. 填入 4 個環境變數（最關鍵的一步！）</h3>
-  <p>在部署設定頁找到 <strong>Environment Variables</strong> 區塊，把下面 4 組「名稱 + 值」一組一組加進去。名稱可以直接按複製按鈕，<strong>一個字都不能差</strong>：</p>
-
-  <div class="tablewrap">
-  <table class="env">
-    <tr><th>名稱（照抄）</th><th>值（填什麼）</th></tr>
-    <tr>
-      <td><div class="copyblock">NEXT_PUBLIC_SUPABASE_URL<button type="button" data-copy="NEXT_PUBLIC_SUPABASE_URL">複製</button></div></td>
-      <td>步驟 3-3 抄的 <strong>Project URL</strong></td>
-    </tr>
-    <tr>
-      <td><div class="copyblock">NEXT_PUBLIC_SUPABASE_ANON_KEY<button type="button" data-copy="NEXT_PUBLIC_SUPABASE_ANON_KEY">複製</button></div></td>
-      <td>步驟 3-3 抄的 <strong>anon public</strong> 金鑰</td>
-    </tr>
-    <tr>
-      <td><div class="copyblock">SUPABASE_SERVICE_ROLE_KEY<button type="button" data-copy="SUPABASE_SERVICE_ROLE_KEY">複製</button></div></td>
-      <td>步驟 3-3 抄的 <strong>service_role</strong> 金鑰</td>
-    </tr>
-    <tr>
-      <td><div class="copyblock">ADMIN_PASSWORD<button type="button" data-copy="ADMIN_PASSWORD">複製</button></div></td>
-      <td><strong>自己發明一組管理密碼</strong>，之後登入後台用。別用你在其他網站用過的密碼</td>
-    </tr>
-  </table>
+  <h3>4-2. 推上去！</h3>
+  <p>回到終端機（如果 <code>npm run dev</code> 還在跑，先按 <code>Ctrl + C</code> 停掉），貼上這三行：</p>
+  <div class="term">
+    <div class="term-label"><span>發布收藏（在 Collector 資料夾裡執行）</span><button type="button" data-copy-target="cmd-publish">複製</button></div>
+    <pre id="cmd-publish">git add -A
+git commit -m "更新收藏"
+git push</pre>
   </div>
-
-  <figure class="shot" data-file="04-vercel-env.png" data-desc="Vercel 環境變數填寫畫面，四組都填好的狀態（值記得打碼）">
-    <img src="images/04-vercel-env.png" alt="環境變數填寫畫面" onerror="this.parentElement.classList.add('missing')">
-    <figcaption>四組都加好再往下一步</figcaption>
-  </figure>
-
-  <h3>4-4. 部署！</h3>
   <ol class="todo">
-    <li>按 <strong>Deploy</strong>，等 1–3 分鐘</li>
-    <li>看到滿天彩帶的 <strong>Congratulations!</strong> 就成功了 🎉</li>
-    <li>點畫面上的預覽圖或 <strong>Visit</strong>，你的網站網址長得像 <code>https://collector-xxxx.vercel.app</code> —— 把它存到書籤！</li>
+    <li>第一次 push 會跳出 GitHub 登入視窗，點「Sign in with your browser」用瀏覽器授權即可（之後就不會再問）</li>
+    <li>push 完，到你的 GitHub 專案頁點上方 <strong>Actions</strong> 分頁，會看到一個工作正在轉圈圈，等它變成 <strong>綠色勾勾</strong>（約 2–3 分鐘）</li>
   </ol>
-
-  <figure class="shot" data-file="04-vercel-deployed.png" data-desc="Vercel 部署成功的 Congratulations 畫面">
-    <img src="images/04-vercel-deployed.png" alt="部署成功畫面" onerror="this.parentElement.classList.add('missing')">
-    <figcaption>看到這個畫面代表你的網站上線了</figcaption>
+  <figure class="shot" data-file="04-actions-green.png" data-desc="Actions 分頁，部署工作顯示綠色勾勾">
+    <img src="images/04-actions-green.png" alt="Actions 綠勾" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>綠色勾勾 = 部署完成</figcaption>
   </figure>
 
-  <div class="tip">如果部署完打開網站看到「🔧 尚未完成初始設定」，代表環境變數沒填對，看<a href="#faq">常見問題第 1 條</a>就能修好。</div>
+  <h3>4-3. 打開你的網站 🎉</h3>
+  <p>你的網址是（把「你的帳號」換掉，注意全部小寫）：</p>
+  <div class="copyblock">https://你的帳號.github.io/Collector/<button type="button" data-copy="https://你的帳號.github.io/Collector/">複製</button></div>
+  <p>把這個網址分享給朋友吧！網站上<strong>沒有任何管理入口</strong>——訪客只能欣賞，不可能改到你的收藏。</p>
+  <figure class="shot" data-file="04-live-site.png" data-desc="部署完成的公開網站">
+    <img src="images/04-live-site.png" alt="上線的網站" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>上線！這是全世界都看得到的版本</figcaption>
+  </figure>
 </section>
 
 <!-- ==================== STEP 5 ==================== -->
 <section class="step" id="step5">
-  <div class="step-head"><div class="step-num">5</div><h2>開始佈置你的收藏室</h2></div>
-  <p class="goal">🎯 目標：上架第一隻娃娃、拼出第一個場景。</p>
+  <div class="step-head"><div class="step-num">5</div><h2>之後的日常：5 分鐘更新流程</h2></div>
+  <p class="goal">🎯 目標：記住這一套循環，以後買了新娃娃就照做。</p>
 
-  <h3>5-1. 登入管理後台</h3>
   <ol class="todo">
-    <li>在你的網站網址後面加上 <code>/login</code>（例如 <code>https://collector-xxxx.vercel.app/login</code>）</li>
-    <li>輸入你在步驟 4-3 自己發明的 <strong>ADMIN_PASSWORD</strong></li>
+    <li>開終端機，進到專案資料夾，啟動後台：</li>
   </ol>
-  <figure class="shot" data-file="05-login.png" data-desc="管理員登入頁面">
-    <img src="images/05-login.png" alt="管理員登入頁" onerror="this.parentElement.classList.add('missing')">
-    <figcaption>只有知道密碼的你能進後台，訪客只能看</figcaption>
-  </figure>
-
-  <h3>5-2. 建立分類和第一隻娃娃</h3>
-  <ol class="todo">
-    <li>進入 <strong>庫存管理</strong>，先在「系列」和「收藏櫃」分頁各建至少一筆（例如系列「戰隊限定」、收藏櫃「A 櫃」）</li>
-    <li>回到「娃娃」分頁，新增你的第一隻娃娃，選好它的系列和櫃位</li>
+  <div class="term">
+    <div class="term-label"><span>① 啟動後台</span><button type="button" data-copy-target="cmd-daily-start">複製</button></div>
+    <pre id="cmd-daily-start">cd Collector
+npm run dev</pre>
+  </div>
+  <ol class="todo" start="2">
+    <li>瀏覽器開 <code>localhost:3000</code>，上架新娃娃 / 改場景，改到滿意</li>
+    <li>回終端機按 <code>Ctrl + C</code> 停掉，然後發布：</li>
   </ol>
-  <figure class="shot" data-file="05-inventory.png" data-desc="庫存管理頁，已建立一筆系列和一隻娃娃">
-    <img src="images/05-inventory.png" alt="庫存管理頁" onerror="this.parentElement.classList.add('missing')">
-    <figcaption>庫存管理：系列、收藏櫃、娃娃都在這裡建</figcaption>
-  </figure>
-
-  <h3>5-3. 上傳照片，讓 AI 幫你去背</h3>
-  <ol class="todo">
-    <li>點進剛建好的娃娃 → <strong>新增造型</strong> → 選一張娃娃照片（背景越乾淨效果越好）</li>
-    <li>等 AI 自動去背（第一次會下載模型，需要 1–2 分鐘，之後就快了）</li>
-    <li>如果 AI 誤刪了耳機或頭髮，用 <strong>🟢 綠色筆刷</strong>塗回來；多留了雜物就用 <strong>🔴 紅色筆刷</strong>擦掉</li>
-    <li>滿意後按儲存。一隻娃娃可以放很多造型（預設、夏季穿搭、戰隊服…），前台可以點擊切換</li>
+  <div class="term">
+    <div class="term-label"><span>② 發布</span><button type="button" data-copy-target="cmd-daily-publish">複製</button></div>
+    <pre id="cmd-daily-publish">git add -A
+git commit -m "更新收藏"
+git push</pre>
+  </div>
+  <ol class="todo" start="4">
+    <li>等 Actions 綠勾（2–3 分鐘），網站就是最新版了 ✨</li>
   </ol>
-  <figure class="shot" data-file="05-bg-removal.png" data-desc="AI 去背 + 魔術筆編輯器畫面">
-    <img src="images/05-bg-removal.png" alt="去背編輯器" onerror="this.parentElement.classList.add('missing')">
-    <figcaption>AI 去背 + 魔術筆手動修補</figcaption>
-  </figure>
 
-  <h3>5-4. 拼出你的虛擬收藏室</h3>
-  <ol class="todo">
-    <li>後台進入 <strong>虛擬收藏室</strong> → 建立場景、取個名字</li>
-    <li>上傳一張背景圖（書櫃照片、電競桌照片、或任何你喜歡的圖）</li>
-    <li>把娃娃一隻隻拖進場景，自由縮放、旋轉、調整前後順序</li>
-    <li>儲存 → <strong>發布</strong>，訪客就能在 <code>/scenes</code> 頁看到</li>
-  </ol>
-  <figure class="shot" data-file="05-scene-editor.png" data-desc="場景編輯器：背景圖上擺了幾隻去背娃娃">
-    <img src="images/05-scene-editor.png" alt="場景編輯器" onerror="this.parentElement.classList.add('missing')">
-    <figcaption>像貼貼紙一樣拼出你的展示櫃</figcaption>
-  </figure>
-
-  <h3>5-5. 分享給朋友 🎉</h3>
-  <p>把你的網址（不含 <code>/login</code>）傳給朋友，他們就能瀏覽你的收藏、點娃娃切換造型、逛你拼的虛擬收藏室。後台只有你有密碼能進，不用擔心被亂改。</p>
-  <figure class="shot" data-file="05-share.png" data-desc="訪客視角的前台首頁，已有娃娃的狀態">
-    <img src="images/05-share.png" alt="前台成品" onerror="this.parentElement.classList.add('missing')">
-    <figcaption>訪客看到的樣子</figcaption>
-  </figure>
+  <div class="tip">commit 訊息（引號裡的字）可以自由發揮，例如 <code>"新增 Faker 簽名娃娃"</code>——這會變成你的收藏更新日誌，以後回頭看很有味道。</div>
 </section>
 
 <!-- ==================== FAQ ==================== -->
@@ -527,38 +443,48 @@ using (bucket_id = 'doll-images');</pre>
   <div class="step-head"><div class="step-num">?</div><h2>常見問題</h2></div>
 
   <details class="faq">
-    <summary>1. 網站打開顯示「🔧 尚未完成初始設定」</summary>
-    <p>代表 Vercel 沒讀到 Supabase 的設定。到 Vercel → 你的專案 → <strong>Settings → Environment Variables</strong> 檢查步驟 4-3 的 4 組變數：名稱有沒有打錯字、值有沒有多複製到空格。修正後到 <strong>Deployments</strong> 分頁，點最新那筆右邊的「…」→ <strong>Redeploy</strong>，環境變數改完一定要重新部署才會生效。</p>
+    <summary>1. push 的時候被拒絕（rejected / failed to push）</summary>
+    <p>通常是 GitHub 上有你電腦裡沒有的變動（例如你在別台電腦推過）。先拉再推：</p>
+    <div class="term">
+      <div class="term-label"><span>先同步再發布</span><button type="button" data-copy-target="cmd-faq-pull">複製</button></div>
+      <pre id="cmd-faq-pull">git pull --rebase
+git push</pre>
+    </div>
   </details>
 
   <details class="faq">
-    <summary>2. 忘記管理密碼了怎麼辦？</summary>
-    <p>不用怕，密碼就存在 Vercel 的環境變數裡。到 Vercel → Settings → Environment Variables 找到 <code>ADMIN_PASSWORD</code>，可以直接看值，或改成新的（改完記得 Redeploy）。</p>
+    <summary>2. push 了但網站沒更新</summary>
+    <p>到 GitHub 專案頁的 <strong>Actions</strong> 分頁看最新那筆：還在轉圈圈就再等等；如果是<strong>紅色叉叉</strong>，點進去看錯誤訊息（截圖下來問人也行）。另外瀏覽器可能有快取，按 <code>Ctrl + F5</code> 強制重新整理。</p>
   </details>
 
   <details class="faq">
-    <summary>3. 圖片上傳失敗 / 存檔一直轉圈圈</summary>
-    <p>最常見的原因是步驟 3-2 的 SQL 沒有執行成功（架子沒蓋好）。回 Supabase 的 SQL Editor 把指令重新貼上執行一次——這段指令設計成<strong>重複執行也不會壞</strong>，放心按 Run。另外到左邊選單 <strong>Storage</strong> 確認有一個叫 <code>doll-images</code> 的 bucket。</p>
+    <summary>3. npm run dev 起不來 / 一片紅字</summary>
+    <p>依序檢查：①終端機目前位置是不是在 <code>Collector</code> 資料夾裡（可以打 <code>cd Collector</code> 再試）②有沒有先跑過 <code>npm install</code> ③ <code>node --version</code> 是不是 v20 以上。都對還是不行，把紅字的最後十行截圖下來查。</p>
   </details>
 
   <details class="faq">
-    <summary>4. 網站放了一陣子沒動，突然打不開 / 資料都不見了？</summary>
-    <p>資料沒有不見！Supabase 免費方案的專案<strong>閒置 7 天會自動休眠</strong>。到 <a href="https://supabase.com/dashboard" target="_blank" rel="noopener">Supabase Dashboard</a> 打開你的專案，按 <strong>Restore</strong> 按鈕，等幾分鐘就會全部回來。常常有朋友來逛的話就不會休眠。</p>
+    <summary>4. 照片很大張，會不會塞爆？</summary>
+    <p>去背後存的 PNG 通常只有幾百 KB，100 隻娃娃大約幾十 MB，離 GitHub 的建議上限（1GB）還很遠。要注意的是<strong>場景背景圖</strong>：上傳前建議先縮到 2000px 寬以內。單一檔案不能超過 100MB（正常照片不可能超過）。</p>
   </details>
 
   <details class="faq">
-    <summary>5. 真的完全免費嗎？額度用得完嗎？</summary>
-    <p>Vercel Hobby 方案和 Supabase 免費方案對個人展示站來說非常夠用：Supabase 免費給 500MB 資料庫 + 1GB 圖片空間，以去背後的 PNG 來算大約能放幾百張。AI 去背是在<strong>你自己的瀏覽器裡</strong>運算的，不花任何伺服器費用。兩個服務免費方案都不需要綁信用卡，所以就算真的用爆了也只會暫停，不會被扣錢。</p>
+    <summary>5. 我可以改網站標題、換配色嗎？</summary>
+    <p>可以！這整個專案都是你的了。標題文字在 <code>src/app/layout.tsx</code> 和 <code>src/app/page.tsx</code>，用任何文字編輯器（推薦 <a href="https://code.visualstudio.com/" target="_blank" rel="noopener">VS Code</a>）打開改字就行，改完照常 push。改壞了就 <code>git checkout .</code> 全部復原。</p>
   </details>
 
   <details class="faq">
-    <summary>6. 想換網址名稱（vercel.app 前面那段）</summary>
-    <p>到 Vercel → 你的專案 → <strong>Settings → Domains</strong>，點 Edit 就能改成 <code>你想要的名字.vercel.app</code>（沒被別人用走的話）。</p>
+    <summary>6. 原版 Collector 之後更新了，我要怎麼跟上？</summary>
+    <p>打開你的 GitHub 專案頁，如果上方出現「This branch is X commits behind」，點 <strong>Sync fork → Update branch</strong>，然後回電腦執行 <code>git pull</code> 把更新拉下來。你的收藏資料不會受影響。</p>
   </details>
 
   <details class="faq">
-    <summary>7. 原版 Collector 更新了，我要怎麼跟上？</summary>
-    <p>打開你的 <code>github.com/你的帳號/Collector</code>，如果上方出現「This branch is X commits behind」，點旁邊的 <strong>Sync fork → Update branch</strong>，Vercel 會自動重新部署成新版。你的娃娃資料都在 Supabase，更新程式不會影響資料。</p>
+    <summary>7. 換了新電腦怎麼辦？</summary>
+    <p>完全不怕——你的整個收藏（包括圖片）都在 GitHub 上。新電腦照步驟 1 裝好 Git 和 Node.js，然後 <code>git clone</code> + <code>npm install</code>，一切如舊。</p>
+  </details>
+
+  <details class="faq">
+    <summary>8. 不想要某些東西被看到？</summary>
+    <p>場景只有按過「發布」的才會出現在網站上，草稿場景訪客看不到。但注意：<strong>repo 是公開的</strong>，照片檔案本身在 GitHub 上看得到。如果整個收藏都不想公開，可以把 repo 設為 Private——不過免費帳號的 GitHub Pages 只支援公開 repo，這時就要考慮改用 Vercel 部署（進階主題）。</p>
   </details>
 </section>
 

@@ -16,7 +16,14 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const admin = await isAdmin();
+  // 靜態輸出：純展示站，沒有後台入口（也不能呼叫 cookies()）
+  // 本機 dev：即個人 CMS，直接顯示管理後台
+  const isStaticExport = process.env.STATIC_EXPORT === "1";
+  const admin = isStaticExport
+    ? false
+    : process.env.NODE_ENV === "development"
+      ? true
+      : await isAdmin();
   return (
     <html lang="zh-Hant" className="dark">
       <body
@@ -43,7 +50,7 @@ export default async function RootLayout({
               >
                 管理後台
               </Link>
-            ) : (
+            ) : isStaticExport ? null : (
               <Link
                 href="/login"
                 className="text-sm text-muted-foreground hover:text-foreground"

@@ -1,22 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-import { isSupabaseConfigured, supabaseAnon } from "@/lib/supabase/server";
-import type { Scene } from "@/lib/types";
+import { listPublishedScenes } from "@/lib/content/store";
+import { asset } from "@/lib/asset";
 import { Card, CardContent } from "@/components/ui/card";
-import { SetupNotice } from "@/components/setup-notice";
-
-export const dynamic = "force-dynamic";
 
 export default async function ScenesListPage() {
-  if (!isSupabaseConfigured()) return <SetupNotice />;
-
-  const sb = supabaseAnon();
-  const { data } = await sb
-    .from("scenes")
-    .select("*")
-    .eq("is_published", true)
-    .order("created_at", { ascending: false });
-  const scenes = (data ?? []) as Scene[];
+  const scenes = await listPublishedScenes();
 
   return (
     <div className="space-y-6">
@@ -35,7 +24,7 @@ export default async function ScenesListPage() {
                 <div className="relative aspect-video bg-muted">
                   {scene.background_url && (
                     <Image
-                      src={scene.background_url}
+                      src={asset(scene.background_url)}
                       alt={scene.name}
                       fill
                       className="object-cover"

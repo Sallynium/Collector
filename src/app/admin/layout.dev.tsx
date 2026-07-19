@@ -9,7 +9,10 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  if (!(await isAdmin())) {
+  // 本機 dev 即個人 CMS，免登入；部署為伺服器時仍需管理員身分
+  const allowed =
+    process.env.NODE_ENV === "development" || (await isAdmin());
+  if (!allowed) {
     redirect("/login");
   }
 

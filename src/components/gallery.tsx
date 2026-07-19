@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { Cabinet, Doll, Series } from "@/lib/types";
+import { asset } from "@/lib/asset";
 
 const ALL = "__all__";
 
@@ -114,7 +115,7 @@ function DollCard({
       <div className="relative flex aspect-square items-center justify-center bg-muted/40">
         {active ? (
           <Image
-            src={active.image_url}
+            src={asset(active.image_url)}
             alt={`${doll.name} - ${active.name}`}
             fill
             className="object-contain p-2"

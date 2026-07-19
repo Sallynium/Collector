@@ -3,7 +3,15 @@
 import { useEffect, useImperativeHandle, useRef, forwardRef } from "react";
 import { Canvas, FabricImage, type FabricObject } from "fabric";
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from "@/lib/scene-constants";
+import { asset } from "@/lib/asset";
 import type { SceneItem } from "@/lib/types";
+
+/** 掛在 fabric 物件上的自訂欄位：srcUrl 保留 repo 相對路徑（getSrc() 會被瀏覽器解析成絕對網址，不能存） */
+type TaggedObject = FabricObject & {
+  dollId?: string;
+  variantId?: string;
+  srcUrl?: string;
+};
 
 export interface SceneCanvasHandle {
   addImage: (imageUrl: string, dollId: string, variantId: string) => Promise<void>;
@@ -35,7 +43,7 @@ export const SceneCanvas = forwardRef<
     fabricRef.current = canvas;
 
     if (backgroundUrl) {
-      FabricImage.fromURL(backgroundUrl, { crossOrigin: "anonymous" }).then((img) => {
+      FabricImage.fromURL(asset(backgroundUrl), { crossOrigin: "anonymous" }).then((img) => {
         const scale = Math.max(
           CANVAS_WIDTH / (img.width || 1),
           CANVAS_HEIGHT / (img.height || 1)
@@ -55,7 +63,7 @@ export const SceneCanvas = forwardRef<
 
     Promise.all(
       initialLayout.map((item) =>
-        FabricImage.fromURL(item.image_url, { crossOrigin: "anonymous" }).then((img) => {
+        FabricImage.fromURL(asset(item.image_url), { crossOrigin: "anonymous" }).then((img) => {
           img.set({
             left: item.left,
             top: item.top,
@@ -66,8 +74,10 @@ export const SceneCanvas = forwardRef<
             selectable: editable,
             evented: editable,
           });
-          (img as FabricObject & { dollId?: string; variantId?: string }).dollId = item.doll_id;
-          (img as FabricObject & { dollId?: string; variantId?: string }).variantId = item.variant_id;
+          const tagged = img as TaggedObject;
+          tagged.dollId = item.doll_id;
+          tagged.variantId = item.variant_id;
+          tagged.srcUrl = item.image_url;
           return img;
         })
       )
@@ -94,7 +104,7 @@ export const SceneCanvas = forwardRef<
     async addImage(imageUrl: string, dollId: string, variantId: string) {
       const canvas = fabricRef.current;
       if (!canvas) return;
-      const img = await FabricImage.fromURL(imageUrl, { crossOrigin: "anonymous" });
+      const img = await FabricImage.fromURL(asset(imageUrl), { crossOrigin: "anonymous" });
       const scale = Math.min(1, 250 / (img.width || 250));
       img.set({
         left: CANVAS_WIDTH / 2 - 60,
@@ -102,8 +112,10 @@ export const SceneCanvas = forwardRef<
         scaleX: scale,
         scaleY: scale,
       });
-      (img as FabricObject & { dollId?: string; variantId?: string }).dollId = dollId;
-      (img as FabricObject & { dollId?: string; variantId?: string }).variantId = variantId;
+      const tagged = img as TaggedObject;
+      tagged.dollId = dollId;
+      tagged.variantId = variantId;
+      tagged.srcUrl = imageUrl;
       canvas.add(img);
       canvas.setActiveObject(img);
       canvas.renderAll();
@@ -137,11 +149,11 @@ export const SceneCanvas = forwardRef<
       const canvas = fabricRef.current;
       if (!canvas) return [];
       return canvas.getObjects().map((obj) => {
-        const o = obj as FabricObject & { dollId?: string; variantId?: string };
+        const o = obj as TaggedObject;
         return {
           doll_id: o.dollId ?? "",
           variant_id: o.variantId ?? "",
-          image_url: (o as unknown as { getSrc?: () => string }).getSrc?.() ?? "",
+          image_url: o.srcUrl ?? (o as unknown as { getSrc?: () => string }).getSrc?.() ?? "",
           left: obj.left ?? 0,
           top: obj.top ?? 0,
           scaleX: obj.scaleX ?? 1,
